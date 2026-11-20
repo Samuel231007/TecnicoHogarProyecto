@@ -4,7 +4,7 @@ Proyecto académico para el curso de **Programación Orientada a Objetos (POO)**
 
 Plataforma que formaliza la contratación de técnicos para el hogar (plomería, electricidad, pintura, cerrajería, carpintería). El cliente solicita un servicio; el administrador asigna un técnico disponible de esa especialidad y zona; el técnico registra el trabajo; y el sistema calcula costos, garantía y pagos y le avisa al cliente de cada cambio de estado.
 
-- **Repositorio:** [proyecto_POO](https://github.com/Samuel231007/proyecto_POO)
+- **Repositorio:** [TecnicoHogarProyecto](https://github.com/Samuel231007/TecnicoHogarProyecto)
 - **Diagrama UML:** [Ver diagrama de clases](https://lucid.app/lucidchart/6b8de022-7d2f-4c7f-ab6e-32428fa6780c/edit?viewport_loc=-4837%2C-1424%2C11332%2C5940%2C0_0&invitationId=inv_890ba847-9cd2-4821-b89e-546f47aec054)
 - El docente está agregado como colaborador del repositorio.
 
@@ -49,7 +49,7 @@ El sistema modela una **plataforma de servicios técnicos a domicilio**. Los pri
 | Entidad | Descripción |
 |---|---|
 | `Cliente` | Usuario que solicita servicios. Tiene ubicación y elige si recibe los avisos por WhatsApp o por correo. |
-| `Técnico` | Usuario con especialidad, zona de cobertura y tarifa base por hora. Maneja su horario y sus bloqueos (`DisponibilidadTecnico`). |
+| `Tecnico` | Usuario con especialidad, zona de cobertura y tarifa base por hora. Maneja su horario y sus bloqueos (`DisponibilidadTecnico`). |
 | `Administrador` | Usuario que registra técnicos, asigna y reasigna órdenes, confirma pagos y filtra órdenes. |
 | `Servicio` | Tipo de trabajo (Plomería, Electricidad...) con su factor de tarifa, duración estimada y días de garantía. |
 | `Solicitud` | Lo que pide el cliente: tipo de problema, ubicación, descripción y horario en que puede recibir al técnico. |
@@ -87,7 +87,7 @@ Cada requerimiento funcional (RF) y no funcional (RNF) con las clases que lo cum
 | RF-16 | Calcular el costo final de la orden con el tiempo real y los materiales registrados, y compararlo con el estimado | **Servicio**: aporta tarifa y duración estimada.<br>**OrdenServicio**: conserva los costos estimado y final.<br>**DetalleTrabajo**: aporta tiempo real.<br>**DetalleTrabajo.Material**: aporta costos y cantidades. | Métodos, asociaciones y encapsulamiento | Implementado |
 | RF-17 | Registrar pagos de una orden mediante transferencia, efectivo o tarjeta | **OrdenServicio**: recibe pagos y consulta el saldo (sin la interfaz Pagable, Decisión 17).<br>**Pago**: clase abstracta con datos comunes.<br>**Transferencia**, **Efectivo** y **Tarjeta**: heredan de Pago. | Clases abstractas, interfaces, herencia y polimorfismo | Implementado |
 | RF-18 | Registrar una solicitud de revisión por un problema cubierto por la garantía de un servicio | **Cliente**: solicita la revisión.<br>**Garantia**: define cobertura y vigencia.<br>**OrdenServicio**: relaciona la revisión con el servicio realizado. | Asociaciones y encapsulamiento | Implementado |
-| RF-19 | Enviar al cliente una notificación cuando cambie el estado de una orden, por WhatsApp o correo | **Notificacion**: conserva el aviso y su resultado; contador estático y enum anidado EstadoEnvio.<br>**Notificable**: interfaz con la operación de envío.<br>**NotificacionWhatsApp** y **NotificacionCorreo**: implementan los canales (envío simulado).<br>**Cliente**: recibe el aviso. | Interfaces, polimorfismo, atributos y métodos estáticos, clases anidadas y encapsulamiento | Implementado |
+| RF-19 | Enviar al cliente una notificación cuando cambie el estado de una orden, por WhatsApp o correo | **Notificacion**: conserva el aviso y su resultado; contador estático y enum EstadoEnvio.<br>**Notificable**: interfaz con la operación de envío.<br>**NotificacionWhatsApp** y **NotificacionCorreo**: implementan los canales (envío simulado).<br>**Cliente**: recibe el aviso. | Interfaces, polimorfismo, atributos y métodos estáticos, clases anidadas y encapsulamiento | Implementado |
 | RF-20 | Filtrar las órdenes por estado, fecha, cliente y técnico asignado | **Administrador**: selecciona filtros.<br>**OrdenServicio**: aporta estado, fecha y técnico.<br>**Cliente** y **Tecnico**: aportan los datos para filtrar. | Clases, métodos, colecciones y búsqueda | Implementado |
 | RNF-01 | Guardar técnicos, clientes y órdenes en archivos entre ejecuciones | **Tecnico**, **Cliente** y **OrdenServicio**: datos que deben conservarse.<br>**FileManage** (paquete persistencia): lee y escribe los archivos de `src/files/`.<br>**BaseRepository** y un repositorio por archivo (paquete repositorios): convierten los objetos en líneas de texto y al revés.<br>**GestorPlataforma**: carga los datos al iniciar y los guarda después de cada cambio. | Persistencia de archivos | Implementado |
 | RNF-02 | Restringir el acceso a la información según el rol y la relación del usuario con la orden | **Usuario**: clase abstracta con identidad y rol.<br>**Cliente**, **Tecnico** y **Administrador**: heredan de Usuario y acceden según sus permisos. | Clases abstractas, herencia y encapsulamiento | Implementado |
@@ -117,7 +117,7 @@ Cada requerimiento funcional (RF) y no funcional (RNF) con las clases que lo cum
 | `Notificable` | Interfaz para enviar una notificación |
 | `NotificacionWhatsApp` | Implementa el envío de notificaciones por WhatsApp |
 | `NotificacionCorreo` | Implementa el envío de notificaciones por correo |
-| `Pagable` | Interfaz con las operaciones de pago de una orden |
+| `Pagable` | Interfaz con las operaciones de pago de una orden (se eliminó después, ver Decisión 17) |
 | `Pago` | Clase abstracta con los datos y comportamientos comunes de un pago |
 | `Transferencia` | Tipo de pago por transferencia |
 | `Efectivo` | Tipo de pago en efectivo |
@@ -143,7 +143,7 @@ BaseRepository (abstracto)         PanelRol (abstracto, interfaz gráfica)
 ├── OrdenServicioRepository        └── PanelAdministrador
 └── ... (un repositorio por archivo)
 ```
-`Tecnico` **es un** `Usuario`: hereda nombre, documento, correo, teléfono y contraseña cifrada, y agrega especialidad, zona y tarifa.
+`Tecnico` **es un** `Usuario`: hereda nombre, documento, correo, teléfono y el código SHA-256 de su contraseña, y agrega especialidad, zona y tarifa.
 
 ### Abstracción
 - `Usuario` es **abstracta**: no se puede crear un "usuario" genérico. Obliga a cada subclase a decir su rol con `getRol()`.
@@ -171,6 +171,7 @@ for (IRepositorioDependiente<OrdenServicio> parte : partes) {
 
 ### Encapsulación
 - Todos los atributos son `private` y se validan antes de guardarse (clase `Validar`).
+- No existe `getContrasenia()`: solo se guarda el código SHA-256 de la contraseña y se compara con `verificarContrasenia()` (RNF-05).
 - Algunos métodos no son `public` para que solo los use su propio paquete. Por ejemplo, `OrdenServicio.asignarTecnico` solo lo llama `Asignacion`, después de revisar especialidad, zona y horario:
 ```java
 // Sin "public": solo Asignacion la llama (RF-04 y RF-13).
@@ -181,9 +182,9 @@ void asignarTecnico(Tecnico nuevo, String responsable) { ... }
 | Interfaz | Para qué sirve | La implementan |
 |---|---|---|
 | `Notificable` | Enviar un aviso al cliente | `NotificacionWhatsApp`, `NotificacionCorreo` |
-| `IRepository<T>` |  define cómo se guardan y se leen en los archivos .txt los datos principales del sistema | `ClienteRepository`, `TecnicoRepository`, `OrdenServicioRepository`... |
+| `IRepository<T>` | Define cómo se guardan y se leen en los archivos .txt los datos principales del sistema | `ClienteRepository`, `TecnicoRepository`, `OrdenServicioRepository`... |
 | `IRepositorioDependiente<P>` | Guardar los datos que pertenecen a otro objeto | `PagoRepository`, `CambioEstadoRepository`, `DisponibilidadRepository`... |
-| `IServicio<T>` | define las consultas comunes que debe tener el servicio de cada tipo de usuario: obtener la lista completa, buscar por nombre, buscar por documento, verificar si alguien ya existe y mostrarlos todos en consola. | `ClienteServicio`, `TecnicoServicio`, `AdministradorServicio` |
+| `IServicio<T>` | Define las consultas comunes que debe tener el servicio de cada tipo de usuario: obtener la lista completa, buscar por nombre, buscar por documento, verificar si alguien ya existe y mostrarlos todos en consola. | `ClienteServicio`, `TecnicoServicio`, `AdministradorServicio` |
 | `IImprimible` | Mostrar el objeto en consola | `Cliente`, `Tecnico`, `Servicio`, `OrdenServicio`, `Pago` |
 
 ### Composición 
@@ -204,7 +205,7 @@ GestorPlataforma ──tiene──> los repositorios y las listas en memoria
 | `Material` | `DetalleTrabajo` | Material usado con su costo y cantidad |
 | `Movimiento` | `Asignacion` | Cada asignación o reasignación de técnico |
 
-### Sobreescritura de métodos (`@Override`)
+### Sobrescritura de métodos (`@Override`)
 ```java
 // Cada tipo de usuario dice su rol
 @Override public String getRol() { return "Cliente"; }        // Cliente
@@ -256,7 +257,7 @@ También `EstadoPago` (pendiente, confirmado, rechazado) y `EstadoEnvio` (pendie
 `IRepository<T>`, `IServicio<T>` e `IRepositorioDependiente<P>` definen el contrato **una sola vez** para cualquier tipo: `IRepository<Cliente>`, `IRepository<OrdenServicio>`, `IRepositorioDependiente<Tecnico>`...
 
 ### Excepciones
-Las reglas se validan lanzando `IllegalArgumentException` o `IllegalStateException` con un mensaje claro. La interfaz los atrapa y los muestra al usuario sin cerrar el programa (RNF-06).
+Las reglas se validan lanzando `IllegalArgumentException` o `IllegalStateException` con un mensaje claro. La interfaz las atrapa y muestra el mensaje al usuario sin cerrar el programa (RNF-06).
 
 ---
 
@@ -304,7 +305,7 @@ FileManage.writeAllLinesInFile(...)          [Persistencia]
 ## Estructura del proyecto
 
 ```
-proyecto_POO/
+TecnicoHogarProyecto/
 ├── README.md                            Este documento (incluye decisiones, trazabilidad y bitácora)
 ├── .gitignore
 ├── .idea/  ·  proyecto_POO.iml          Configuración de IntelliJ IDEA
@@ -323,7 +324,7 @@ proyecto_POO/
     │   ├── IImprimible.java             Contrato de impresión en consola
     │   └── Notificable.java             Canal de avisos (RF-19)
     │
-    ├── modelos/                         Código del equipo (ver "Cambios" abajo)
+    ├── modelos/                         Clases del dominio
     │   ├── Usuario, Administrador, Cliente, Tecnico
     │   ├── DisponibilidadTecnico (+ FranjaHoraria anidada)
     │   ├── Solicitud, Servicio, OrdenServicio (+ CambioEstado anidada), Asignacion (+ Movimiento anidada)
@@ -385,8 +386,6 @@ proyecto_POO/
     │
     └── files/                           16 archivos .txt con datos de ejemplo
 ```
-
----
 
 ---
 
@@ -471,11 +470,9 @@ Los archivos de datos que pertenecen a una orden empiezan con el código de la o
 | `pagos.txt` | `codigoOrden\|metodo\|monto\|fecha\|estado\|referencia` |
 | `notificaciones.txt` | `codigoOrden\|id\|documentoCliente\|nombre\|telefono\|correo\|mensaje\|fecha\|canal\|estadoEnvio\|detalle` |
 
-> **RNF-05:** las contraseñas se guardan cifradas con SHA-256 (nunca en texto plano), y de la tarjeta solo se guarda la referencia de autorización, nunca el número ni el código de seguridad.
+> **RNF-05:** de las contraseñas solo se guarda su código SHA-256 (nunca el texto original), y de la tarjeta solo se guarda la referencia de autorización, nunca el número ni el código de seguridad.
 
-> **Composición en archivos:** igual que `prestamos.txt` en el proyecto base, `ordenes.txt` guarda solo los **IDs** del cliente, la solicitud, el servicio y el técnico. Al leer, `OrdenServicioRepository` busca los objetos completos y arma la orden.
-
----
+> **Composición en archivos:** `ordenes.txt` guarda solo los **IDs** del cliente, la solicitud, el servicio y el técnico. Al leer, `OrdenServicioRepository` busca los objetos completos y arma la orden.
 
 ---
 
@@ -540,13 +537,14 @@ Los botones solo se activan cuando la acción tiene sentido (por ejemplo, "Cance
 ---
 
 ## ArrayList vs Archivo de texto
-Gestor de Plataforma tiene 2 usos:
+
+`GestorPlataforma` se puede crear de dos formas:
 ```java
 new GestorPlataforma();        // MODO ARCHIVO: carga src/files/*.txt y guarda cada cambio (RNF-01)
 new GestorPlataforma(false);   // MODO MEMORIA: solo ArrayList (lo usa DemoRequerimientos)
 ```
 
-Los datos se leen de los archivos solo una vez, al abrir el programa, y después todo el sistema trabaja con esos mismos objetos. Esto es importante porque usamos == para comprobar, por ejemplo, que una orden sea del cliente que la está consultando, y == solo funciona si es exactamente el mismo objeto, no una copia con los mismos datos.
+Los datos se leen de los archivos solo una vez, al abrir el programa, y después todo el sistema trabaja con esos mismos objetos. Esto es importante porque usamos `==` para comprobar, por ejemplo, que una orden sea del cliente que la está consultando, y `==` solo funciona si es exactamente el mismo objeto, no una copia con los mismos datos.
 
 ---
 
@@ -724,7 +722,7 @@ OrdenServicio se asocia con Solicitud y Tecnico. También relaciona el servicio,
 
 Crear la clase `DisponibilidadTecnico` para registrar los horarios en los que un técnico puede trabajar y los bloques temporales en los que no puede recibir asignaciones. 
 
-**Alternativa considerada**
+**Alternativas consideradas**
 
 1. Guardar todos los horarios disponibles y los bloqueos directamente como atributos de la clase `Tecnico`, sin separar la gestión de disponibilidad.
 2. Registrar únicamente el horario habitual del técnico, sin contemplar los bloques de indisponibilidad temporal.
@@ -801,8 +799,8 @@ Los canales implementan el mismo contrato y pueden usarse polimórficamente: qui
 - Notificable declara `getNombreCanal(): String` y `enviar(Notificacion): boolean`.
 - El envío es simulado: NotificacionWhatsApp valida que el celular tenga 10 dígitos y empiece por 3, y NotificacionCorreo valida el correo y arma el asunto. Cada canal deja el aviso como ENVIADA o FALLIDA con el detalle o la causa (RNF-06).
 - Notificacion guarda código de la orden, documento, nombre, teléfono y correo del cliente, mensaje, fecha (`LocalDateTime`), canal, estado y detalle, todos privados. No tiene setters: solo `marcarEnviada()` y `marcarFallida()`, que funcionan una sola vez para que el registro no se altere (RNF-04).
-- `EstadoEnvio` (PENDIENTE, ENVIADA, FALLIDA) es un enum anidado dentro de Notificacion.
-- Miembros estáticos: el contador `totalNotificaciones` (numera los avisos), `getTotalNotificaciones()`, `crearMensajeCambioEstado()` (arma el texto del aviso en lenguaje claro) y la constante `NOMBRE_CANAL` de cada canal.
+- `EstadoEnvio` (PENDIENTE, ENVIADA, FALLIDA) es un enum que está en el paquete `enums`, junto con `EstadoOrden` y `EstadoPago`.
+- Miembros estáticos: el contador `totalNotificaciones` (numera los avisos), `getTotalNotificaciones()`, y `crearMensajeCambioEstado()`, que arma el texto del aviso en lenguaje claro.
 
 Esta decisión apoya RF-19, RNF-04 y RNF-06.
 
@@ -829,7 +827,7 @@ Las clases se implementan en los archivos de sus contenedoras. FranjaHoraria apo
 
 **Decisión**
 
-Crear la clase anidada estática `FranjaHoraria` dentro de `DisponibilidadTecnico` para representar un día específico y un intervalo horario mediante una hora de inicio y una hora de finalización. También permite validar los intervalos y comprobar si dos franjas se entrelazan.
+Crear la clase anidada estática `FranjaHoraria` dentro de `DisponibilidadTecnico` para representar un día específico y un intervalo horario mediante una hora de inicio y una hora de finalización. También permite validar los intervalos y comprobar si dos franjas se cruzan.
 
 **Alternativas consideradas**
 
@@ -868,11 +866,11 @@ Se decidió asociar Cliente y Solicitud, de manera que un cliente puede crear va
 
 **Por qué**
 
-El sistema necesita identificar quién solicita un servicio y mantener relacionadas las solicitudes con la persona que las creó, además esto se complementa para el cumplimiento del RF-03 que exige que el cliente solicite un servicio y registre la información necesaria.
+El sistema necesita identificar quién solicita un servicio y mantener relacionadas las solicitudes con la persona que las creó. Además, esto ayuda a cumplir el RF-03, que exige que el cliente solicite un servicio y registre la información necesaria.
 
 **Consecuencia**
 
-La plataforma puede consultar las solicitudes de cada cliente, identificar al responsable de una solicitud y facilitar las operaciones como consultar.
+La plataforma puede consultar las solicitudes de cada cliente, identificar al responsable de una solicitud y facilitar operaciones como consultar su historial (RF-08).
 
 
 ### Decisión 15 · Incorporar la actualización de datos para el RF-11
@@ -894,7 +892,7 @@ El cliente puede actualizar sus datos sin necesidad de crear una cuenta nueva. L
 
 **Decisión**
 
-Se asignó a Solicitud la responsabilidad de comprobar si una petición puede cancelarse por medio de `validarCancelacion()` y `cancelar()`, esto de la mano de crear `EstadoSolicitud` con los estados posibles de la solicitud para consultas y validaciones de los métodos nombrados.
+El cliente cancela con `Cliente.cancelarSolicitud()`, que primero revisa que la orden sea suya y luego llama a `OrdenServicio.cancelar()`, donde se comprueba que el estado permita cancelar y se guarda el motivo en la solicitud. La solicitud usa los mismos estados de la orden (`EstadoOrden`), en lugar de tener una lista de estados propia.
 
 **Por qué**
 
@@ -902,7 +900,7 @@ La cancelación depende del estado en el que se encuentre la solicitud. No se pe
 
 **Consecuencia**
 
-El sistema puede impedir cancelaciones que no sean permitidas por las reglas del negocio. Por ejemplo, si las condiciones definidas permiten cancelar solo las solicitudes pendientes, la operación debe rechazar la cancelación cuando la solicitud ya esté asignada.
+El sistema impide las cancelaciones que no permiten las reglas del negocio: el cliente solo puede cancelar mientras la orden está pendiente y no tiene técnico asignado. Si ya está asignada, la cancelación se rechaza con un mensaje. Como la solicitud y la orden comparten los estados, nunca pueden quedar contradiciéndose.
 
 
 ### Decisión 17 · Eliminar la interfaz Pagable
@@ -928,7 +926,7 @@ OrdenServicio incorpora directamente las operaciones establecidas, manteniendo l
 
 **Decisión**
 
-Hicimos una sola clase Servicio y cada tipo (Plomería, Electricidad, Pintura) es un objeto con sus propios valores: un factor de tarifa, cuántas horas dura más o menos y cuántos días de garantía tiene.
+Hicimos una sola clase `Servicio` y cada tipo (Plomería, Electricidad, Pintura) es un objeto con sus propios valores: un factor de tarifa, cuántas horas dura más o menos y cuántos días de garantía tiene.
 
 **Alternativas consideradas**
 
@@ -936,7 +934,7 @@ Hicimos una sola clase Servicio y cada tipo (Plomería, Electricidad, Pintura) e
 2. Usar un enum con los tipos, como hicimos con los estados de la orden.
 3. Poner if en OrdenServicio para calcular el precio según el tipo.
 
-***Por qué**
+**Por qué**
 
 Nos dimos cuenta de que los tipos no hacen nada distinto, solo cambian los números, así que hacer herencia no tenía sentido. Con el enum el problema era que el administrador no podría crear tipos nuevos, porque quedarían fijos en el código. Y con los if tocaría cambiar OrdenServicio cada vez que se agrega un servicio.
 
@@ -1065,7 +1063,7 @@ El archivo `asignaciones.txt` guarda los documentos de los técnicos, y al leerl
 
 **Decisión**
 
-La aplicación se usa con ventanas hechas en Swing: inicio de sesión por rol y un panel para el cliente, el técnico y el administrador. `PanelRol` es una clase abstracta con la barra lateral, y `PanelCliente`, `PanelTecnico` y `PanelAdministrador` heredan de ella. Los menús de consola del estilo del proyecto base se conservan y se abren con el argumento `consola`.
+La aplicación se usa con ventanas hechas en Swing: inicio de sesión por rol y un panel para el cliente, el técnico y el administrador. `PanelRol` es una clase abstracta con la barra lateral, y `PanelCliente`, `PanelTecnico` y `PanelAdministrador` heredan de ella. Los menús de consola se conservan y se abren con el argumento `consola`.
 
 **Alternativas consideradas**
 
@@ -1094,6 +1092,10 @@ No usamos ninguna librería externa. Todo el proyecto funciona con lo que ya tra
 **Por qué**
 
 Queríamos que cualquiera pudiera abrir el proyecto en IntelliJ y ejecutarlo sin instalar nada más. Una base de datos o una librería externa habría obligado a cada integrante, y al profesor, a descargarla y configurarla. Además, lo que necesitábamos ya lo trae Java, y así nos enfocamos en las clases y no en aprender herramientas nuevas.
+
+**Consecuencia**
+
+El proyecto no necesita Maven ni archivos `.jar` adicionales: basta con el JDK. Las fechas se manejan con `LocalDate` y `LocalDateTime` en vez de texto, lo que permite compararlas y calcular, por ejemplo, la fecha de fin de la garantía. Esta decisión apoya RNF-01, RNF-02 y RNF-05.
 
 ### Decisión 27 · Una clase base y dos interfaces para todos los repositorios
 
@@ -1171,9 +1173,9 @@ Registro del uso de herramientas de IA durante el desarrollo del proyecto **Téc
 | **Fecha** | 16/10/2026 |
 | **Herramienta y modelo** | Claude (Anthropic) · modelo claude-opus-5-5 |
 | **Qué se le pidió** | No teníamos claro cómo organizar las clases de notificaciones (Notificacion, Notificable, NotificacionWhatsApp y NotificacionCorreo) para cumplir el RF-19, así que le preguntamos cómo podían relacionarse. |
-| **Qué respondió** | Nos sugirió separar el aviso (Notificacion) del canal que lo envía (Notificable) y usar una interfaz en vez de herencia, porque WhatsApp y Correo solo comparten la acción de enviar. Nos dio un código base para las clases y un borrador de la Decisión 8. |
+| **Qué respondió** | Nos sugirió separar el aviso (Notificacion) del canal que lo envía (Notificable) y usar una interfaz en vez de herencia, porque WhatsApp y Correo solo comparten la acción de enviar. Nos dio un código base para las clases y un borrador de la decisión sobre notificaciones (hoy Decisión 10). |
 | **Qué aceptamos** | La idea de usar la interfaz Notificable y la estructura general de las clases. |
-| *Qué corregimos* | Cada uno revisó y ajustó en su rama la clase que le tocaba. Reescribimos la explicación porque era demasiado larga y movimos el enum EstadoEnvio al paquete enums, junto con EstadoOrden y EstadoPago, para seguir la estructura del profesor. ||
+| **Qué corregimos** | Cada uno revisó y ajustó en su rama la clase que le tocaba. Reescribimos la explicación porque era demasiado larga y movimos el enum `EstadoEnvio` al paquete `enums`, junto con `EstadoOrden` y `EstadoPago`, para tener todos los estados en un mismo lugar. |
 
 
 
@@ -1183,7 +1185,7 @@ Registro del uso de herramientas de IA durante el desarrollo del proyecto **Téc
 |---|---|
 | **Fecha** | 19/10/2026 |
 | **Herramienta y modelo** | ChatGPT (OpenAI) · modelo GPT-6 |
-| **Qué se le pidió** | Revisar el UML y la planificación de las clases `Pagable`, `DetalleTrabajo`, `Calificacion` y `Material`, contrastándolas con algunas clases ya desarrolladas y la documentación existente del proyecto. Ayudar a mantener nombres de atributos y métodos coherentes con el resto del documento  |
+| **Qué se le pidió** | Revisar el UML y la planificación de las clases `Pagable`, `DetalleTrabajo`, `Calificacion` y `Material`, contrastándolas con algunas clases ya desarrolladas y la documentación existente del proyecto. Ayudar a mantener nombres de atributos y métodos coherentes con el resto del documento. |
 | **Qué respondió** | Propuso ajustes en los nombres de algunos atributos para mejorar la claridad y la coherencia del modelo. Se revisó el uso de `monto` en la clase relacionada con los pagos, propuso cambiarlo a `pago` y se planteó el cambio de `horas` a `horasReales` en `DetalleTrabajo`. |
 | **Qué aceptamos** | Se aceptó el uso de `pago` en lugar de `monto` para nombrar el atributo correspondiente al valor monetario. También se aceptó cambiar el nombre relacionado con las horas, pero se eligió `horasTrabajo` en lugar de `horasReales`, ya que describe de forma más clara el tiempo dedicado al trabajo y evita confusiones con otra definición de horas existente en una clase diferente. |
 | **Qué corregimos** | Se ajustó la propuesta para conservar la coherencia con el modelo existente. En lugar de aplicar directamente todos los nombres sugeridos, se priorizó que cada atributo expresara claramente su propósito y no se confundiera con conceptos definidos en otras clases. |
@@ -1213,7 +1215,7 @@ Registro del uso de herramientas de IA durante el desarrollo del proyecto **Téc
 | **¿Qué corregimos?** | Realizamos pequeños ajustes en la definición de algunos métodos y en la descripción de las relaciones entre las clases, procurando mantener el diseño original del equipo y cumplir con los requerimientos establecidos. |
 
 
-### Registro 8 · Revisión de vacios en el código de DisponibilidadTecnico
+### Registro 8 · Revisión de vacíos en el código de DisponibilidadTecnico
 
 | Campo | Detalle |
 |---|---|
@@ -1242,9 +1244,9 @@ Registro del uso de herramientas de IA durante el desarrollo del proyecto **Téc
 |---|---|
 | **Fecha** | 17/11/2026 |
 | **Herramienta y modelo** | Claude (Anthropic) · modelo claude-opus-5-5 |
-| **Qué se le pidió** | Ya teníamos las clases del modelo, pero nos faltaba guardar los datos en archivos para que no se perdieran al cerrar el programa (RNF-01). Debíamos implementar los repositorios para poder convertirlos en texto usando también la persistencia.  Le pedimos ayuda con esa parte. |
-| **Qué respondió** | Nos ayudó a crear algunos de los repositorios a partir de lo que teníamos, la interfaz `IRepository` con las operaciones CRUD (crear, leer, actualizar y eliminar) y un repositorio por cada archivo faltante, además de 16 de texto con datos de ejemplo. Los repositorios de los datos que dependen de una orden o de un técnico (pagos, garantías, asignaciones...) se conectan con su "padre" mediante `IRepositorioDependiente`. También nos ayudó a crear un servicio por rol y los menús de consola. |
-| **Qué aceptamos** | Los repositorios faltantes y la persistencia en archivos `.txt` con CRUD y generando los ejemplos base para aplicarlo. |
+| **Qué se le pidió** | Ya teníamos las clases del modelo, pero nos faltaba guardar los datos en archivos para que no se perdieran al cerrar el programa (RNF-01). Debíamos implementar los repositorios para poder convertirlos en texto usando también la persistencia. Le pedimos ayuda con esa parte. |
+| **Qué respondió** | Nos ayudó a crear los repositorios a partir de las clases que teníamos: la interfaz `IRepository` con las operaciones CRUD (crear, leer, actualizar y eliminar) y un repositorio por cada archivo, además de 16 archivos de texto con datos de ejemplo. Los repositorios de los datos que dependen de una orden o de un técnico (pagos, garantías, asignaciones...) se conectan con su "padre" mediante `IRepositorioDependiente`. También nos ayudó a crear un servicio por rol y los menús de consola. |
+| **Qué aceptamos** | Los repositorios y la persistencia en archivos `.txt` con CRUD y generando los ejemplos base para aplicarlo. |
 | **Qué corregimos** | Le pedimos que respetara la estructura que queríamos tener. También le pedimos unificar todo en un solo README ya que teníamos secciones para toma de decisiones y uso de IA. Después de revisarlo, pedimos mejorar la parte visual de la que se encargó principalmente. |
 
 
@@ -1254,10 +1256,10 @@ Registro del uso de herramientas de IA durante el desarrollo del proyecto **Téc
 |---|---|
 | **Fecha** | 18/11/2026 |
 | **Herramienta y modelo** | Claude (Anthropic) · modelo claude-opus-5-5 |
-| **Qué se le pidió** | Mejorar la parte visual de la interfaz para que fuera acorde a una plataforma de técnicos del hogar y cumpliera todos los requerimientos; después, ajustar el código a la estructura exacta del repositorio del profesor y subirlo al repositorio del equipo. |
-| **Qué respondió** | Creó una interfaz gráfica en Swing con un panel por rol y la probó recorriendo los flujos de los tres roles. Al probarla encontró que se podía registrar dos veces el mismo pago y lo corrigió (Decisión 28). Preparó la integración a `main` en commits pequeños que compilan, adaptó las pruebas del equipo a los paquetes y actualizó el README, la trazabilidad y el registro de decisiones. |
+| **Qué se le pidió** | Mejorar la parte visual de la interfaz para que fuera acorde a una plataforma de técnicos del hogar y cumpliera todos los requerimientos; después, organizar el código por paquetes y subirlo al repositorio del equipo. |
+| **Qué respondió** | Creó una interfaz gráfica en Swing con un panel por rol y la probó recorriendo los flujos de los tres roles. Al probarla encontró que se podía registrar dos veces el mismo pago y lo corrigió (ver la regla de pagos en Reglas de negocio). Preparó la integración a `main` en commits pequeños que compilan, adaptó las pruebas del equipo a los paquetes y actualizó el README, la trazabilidad y el registro de decisiones. |
 | **Qué aceptamos** | La interfaz gráfica conservando la consola, la corrección de los pagos y la integración a `main` con la historia de las clases que ya estaban. |
-| **Qué corregimos** | Se pidió seguir exactamente la estructura del repositorio del profesor: las ventanas pasaron de un paquete `gui` a `ui`, la clase `Validar` pasó de `utilidades` a `modelos` y quedó un solo `Main.java`. Al integrar se detectó que la versión unificada de `Servicio` había perdido los setters con validación que pide la Decisión 18, y se recuperaron para que las pruebas del equipo pasaran completas. Por último, se pidió reunir toda la documentación (estructura, trazabilidad, decisiones y bitácora) en un solo README con el formato del proyecto base. Después se pidió quitar la carpeta de pruebas y dejar en el código solo los comentarios que explican algo necesario. |
+| **Qué corregimos** | Se pidió organizar el código en los paquetes del proyecto: las ventanas pasaron de un paquete `gui` a `ui`, la clase `Validar` pasó de `utilidades` a `modelos` y quedó un solo `Main.java`. Al integrar se detectó que la versión unificada de `Servicio` había perdido los setters con validación que pide la Decisión 18, y se recuperaron para que las pruebas del equipo pasaran completas. Por último, se pidió reunir toda la documentación (estructura, trazabilidad, decisiones y bitácora) en un solo README. Después se pidió quitar la carpeta de pruebas y dejar en el código solo los comentarios que explican algo necesario. |
 
 ### Registro 12 · Cómo funcionan las interfaces de los repositorios
 
@@ -1267,7 +1269,7 @@ Registro del uso de herramientas de IA durante el desarrollo del proyecto **Téc
 | **Herramienta y modelo** | Claude (Anthropic) · modelo claude-opus-5-5 |
 | **Qué se le pidió** | Los repositorios, `BaseRepository` y las interfaces `IRepository<T>` e `IRepositorioDependiente<P>` los creó la herramienta para conectar nuestras clases con los archivos `.txt`. Como eso no lo vimos en clase, le pedimos que nos explicara por qué los usó y cómo funcionan. |
 | **Qué respondió** | Nos explicó que `BaseRepository` es una clase abstracta con el código que todos los repositorios necesitan (leer el archivo, separar y unir campos, buscar por clave), para no repetirlo. Que hay dos interfaces porque hay dos tipos de datos: los que existen solos, como un cliente, que usan `IRepository<T>` con el CRUD, y los que pertenecen a otro, como un pago, que es de una orden, que usan `IRepositorioDependiente<P>` y se guardan y cargan junto con su padre. También nos explicó que la `<T>` y la `<P>` son genéricos, que permiten usar la misma interfaz con distintas clases sin perder la revisión de tipos de Java. |
-| **Qué aceptamos** | La estructura de los repositorios y la explicación, que usamos para escribir la Decisión 12 y la parte de repositorios de la jerarquía de clases. |
+| **Qué aceptamos** | La estructura de los repositorios y la explicación, que usamos para escribir la Decisión 27 y la parte de repositorios de la jerarquía de clases. |
 | **Qué corregimos / aprendimos** | Revisamos la explicación con el código de `PagoRepository` y `ClienteRepository` para entender el recorrido completo: cómo un objeto se convierte en una línea del `.txt` y cómo, al abrir el programa, cada línea vuelve a ser un objeto dentro de su orden. Aprendimos qué son los genéricos y la diferencia entre heredar de una clase abstracta (reutilizar código) e implementar una interfaz (cumplir un contrato). |
 
 
